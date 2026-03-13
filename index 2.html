@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #000000;
+            --card: #0a0a0a;
+            --accent: #a855f7;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --text: #ffffff;
+        }
+
+        /* Entrance Halaman Utama */
+        @keyframes pageIn {
+            from { opacity: 0; transform: scale(1.1); filter: blur(10px); }
+            to { opacity: 1; transform: scale(1); filter: blur(0); }
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            overflow-x: hidden;
+            animation: pageIn 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Input Card Entrance */
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .glass-card {
+            width: 100%;
+            max-width: 420px;
+            background: var(--card);
+            border: 1px solid #1a1a1a;
+            padding: 24px;
+            border-radius: 28px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(168, 85, 247, 0.1);
+            animation: slideDown 0.8s 0.2s both;
+        }
+
+        input {
+            width: 100%;
+            padding: 16px;
+            margin-bottom: 15px;
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 16px;
+            color: white;
+            font-size: 15px;
+            box-sizing: border-box;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .btn-main {
+            width: 100%;
+            padding: 16px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .btn-main:hover { transform: scale(1.02); filter: brightness(1.2); }
+        .btn-main:active { transform: scale(0.95); }
+
+        /* Modal Animasi (Zoom In & Blur Out) */
+        #photoModal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+
+        @keyframes modalEnter {
+            from { opacity: 0; transform: scale(0.5); rotate: -5deg; }
+            to { opacity: 1; transform: scale(1); rotate: 0deg; }
+        }
+
+        .modal-content {
+            background: #111;
+            padding: 30px;
+            border-radius: 32px;
+            text-align: center;
+            max-width: 340px;
+            border: 1px solid #333;
+            animation: modalEnter 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* List Items Entrance & Exit */
+        @keyframes itemIn {
+            0% { opacity: 0; transform: translateX(-100px) skewX(10deg); }
+            100% { opacity: 1; transform: translateX(0) skewX(0); }
+        }
+
+        .list-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 18px 0;
+            border-bottom: 1px solid #111;
+            animation: itemIn 0.6s cubic-bezier(0.23, 1, 0.32, 1) both;
+        }
+
+        .item-img {
+            width: 55px; height: 55px; border-radius: 16px;
+            object-fit: cover; background: #1a1a1a;
+            transition: 0.5s;
+        }
+
+        .item-img:hover { transform: scale(1.2) rotate(5deg); }
+
+        /* Receipt / Kertas Area */
+        #receipt {
+            width: 100%;
+            max-width: 420px;
+            background: #000;
+            padding: 40px;
+            border-radius: 40px;
+            border: 1px solid #111;
+            position: relative;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.8);
+            animation: slideDown 1s 0.4s both;
+        }
+
+        /* Total Box Glow */
+        @keyframes glow {
+            0% { box-shadow: 0 0 5px rgba(168, 85, 247, 0.2); }
+            50% { box-shadow: 0 0 20px rgba(168, 85, 247, 0.4); }
+            100% { box-shadow: 0 0 5px rgba(168, 85, 247, 0.2); }
+        }
+
+        .total-box {
+            margin-top: 40px;
+            padding: 30px;
+            background: #0a0a0a;
+            border-radius: 24px;
+            text-align: center;
+            border: 1px solid #222;
+            animation: glow 3s infinite;
+        }
+
+        .total-box h2 { font-size: 38px; margin: 10px 0 0; color: var(--accent); font-weight: 800; }
+
+        .btn-download {
+            margin-top: 30px;
+            background: #ffffff10;
+            color: #666;
+            border: 1px solid #333;
+            padding: 15px 30px;
+            border-radius: 18px;
+            cursor: pointer;
+            transition: 0.3s;
+            animation: slideDown 1s 0.6s both;
+        }
+
+        .btn-download:hover { background: white; color: black; }
+
+        .preview-img { width: 100%; border-radius: 20px; margin-bottom: 20px; border: 2px solid var(--accent); }
+    </style>
+</head>
+<body>
+
+    <div class="glass-card">
+        <input type="text" id="itemName" placeholder="Ketik Nama Barang...">
+        <input type="number" id="itemPrice" placeholder="Harga Jual (Rp)">
+        <button class="btn-main" onclick="openConfirm()">Tambahkan Sekarang</button>
+    </div>
+
+    <div id="receipt">
+        <div class="header">
+            <h1 style="margin:0; letter-spacing: -1.5px;">Pricelist</h1>
+            <p id="dateDisplay" style="color:#555; font-size: 13px; margin-top:8px;"></p>
+        </div>
+
+        <div id="listContainer"></div>
+
+        <div class="total-box">
+            <small style="color:#444; letter-spacing: 3px;">TOTAL BALANCE</small>
+            <h2 id="totalDisplay">Rp 0</h2>
+        </div>
+    </div>
+
+    <button class="btn-download" onclick="saveAsJpg()">Download Ultra-HD Report</button>
+
+    <div id="photoModal">
+        <div class="modal-content">
+            <p style="color:#aaa; font-size: 12px; margin-bottom: 10px;">AI MENEMUKAN FOTO INI</p>
+            <img id="imgPreview" class="preview-img" src="">
+            <div style="display: flex; gap: 12px;">
+                <button onclick="finalizeItem(false)" style="flex:1; padding:15px; border-radius:12px; border:none; background:#222; color:white; cursor:pointer;">Lewati</button>
+                <button onclick="finalizeItem(true)" style="flex:1; padding:15px; border-radius:12px; border:none; background:var(--success); color:white; font-weight:bold; cursor:pointer;">Gunakan</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+    let total = 0;
+    let currentTempData = {};
+
+    document.getElementById('dateDisplay').innerText = new Date().toLocaleDateString('id-ID', {
+        weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+    });
+
+    function openConfirm() {
+        const name = document.getElementById('itemName').value;
+        const price = document.getElementById('itemPrice').value;
+        if(!name || !price) return;
+
+        currentTempData = { name, price: parseInt(price) };
+        const previewUrl = `https://source.unsplash.com/400x400/?${encodeURIComponent(name)}`;
+        
+        document.getElementById('imgPreview').src = previewUrl;
+        document.getElementById('photoModal').style.display = 'flex';
+    }
+
+    function finalizeItem(usePhoto) {
+        const modal = document.getElementById('photoModal');
+        const container = document.getElementById('listContainer');
+        const imgUrl = usePhoto ? document.getElementById('imgPreview').src : '';
+        
+        const div = document.createElement('div');
+        div.className = 'list-item';
+        div.innerHTML = `
+            ${usePhoto ? `<img src="${imgUrl}" class="item-img" crossorigin="anonymous">` : '<div class="item-img" style="border:1px dashed #333;"></div>'}
+            <div style="flex:1">
+                <div style="font-weight:700; font-size:16px;">${currentTempData.name}</div>
+                <div style="color:var(--success); font-size:14px; font-weight:600;">+ Rp ${currentTempData.price.toLocaleString('id-ID')}</div>
+            </div>
+        `;
+
+        container.prepend(div); // Muncul dari atas
+        
+        total += currentTempData.price;
+        document.getElementById('totalDisplay').innerText = "Rp " + total.toLocaleString('id-ID');
+
+        // Animasi Keluar Modal
+        modal.style.transition = '0.3s';
+        modal.style.opacity = '0';
+        setTimeout(() => {
+            modal.style.display = 'none';
+            modal.style.opacity = '1';
+        }, 300);
+
+        document.getElementById('itemName').value = '';
+        document.getElementById('itemPrice').value = '';
+        document.getElementById('itemName').focus();
+    }
+
+    function saveAsJpg() {
+        const receipt = document.getElementById('receipt');
+        html2canvas(receipt, {
+            useCORS: true,
+            scale: 3,
+            backgroundColor: "#000000"
+        }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = `Midnight-Report-${Date.now()}.jpg`;
+            link.href = canvas.toDataURL("image/jpeg", 0.9);
+            link.click();
+        });
+    }
+</script>
+
+</body>
+</html>
