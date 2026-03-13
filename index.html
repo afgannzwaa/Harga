@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Midnight Pro Tracker + Link</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #000000;
+            --card: #0a0a0a;
+            --accent: #a855f7;
+            --text: #ffffff;
+            --success: #22c55e;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            animation: fadeIn 0.8s ease;
+        }
+
+        /* Input Area */
+        .input-card {
+            width: 100%;
+            max-width: 400px;
+            background: var(--card);
+            padding: 20px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #1a1a1a;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 10px;
+            color: white;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        input:focus { border-color: var(--accent); }
+
+        .file-input-wrapper {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            opacity: 0;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            cursor: pointer;
+        }
+
+        .file-input-wrapper label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            background: #111;
+            border: 1px dashed #333;
+            border-radius: 10px;
+            color: #666;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .btn-add {
+            width: 100%;
+            padding: 14px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        /* AREA RECEIPT */
+        #receipt {
+            width: 100%;
+            max-width: 400px;
+            background: #000000;
+            padding: 35px;
+            border-radius: 30px;
+            border: 1px solid #1a1a1a;
+            color: #ffffff;
+        }
+
+        .item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #111;
+            animation: slideIn 0.4s ease;
+        }
+
+        .item img {
+            width: 55px; height: 55px; border-radius: 10px; object-fit: cover;
+        }
+
+        .total-display {
+            background: #050505;
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+            margin-top: 25px;
+            border: 1px solid #1a1a1a;
+        }
+
+        /* Tombol Download & Link Area */
+        .action-container {
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .dl-btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid #333;
+            background: #111;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .dl-btn:hover { background: white; color: black; }
+
+        /* Link Box Style */
+        #linkArea {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background: #0a0a0a;
+            border: 1px solid var(--accent);
+            border-radius: 12px;
+            animation: slideDown 0.5s ease forwards;
+        }
+
+        .link-text {
+            display: block;
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 12px;
+            word-break: break-all;
+            margin-top: 5px;
+            padding: 8px;
+            background: #000;
+            border-radius: 6px;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { transform: translateX(-20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes slideDown { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="input-card">
+        <input type="text" id="itemName" placeholder="Nama Menu">
+        <input type="number" id="itemPrice" placeholder="Harga Jual">
+        
+        <div class="file-input-wrapper">
+            <input type="file" id="itemPhoto" accept="image/*" onchange="previewFile()">
+            <label id="fileLabel">📷 Pilih Foto Menu</label>
+        </div>
+
+        <button class="btn-add" onclick="addItem()">Tambah ke List</button>
+    </div>
+
+    <div id="receipt">
+        <h2 style="margin: 0; color: var(--accent);">Daily Revenue</h2>
+        <p id="dateText" style="font-size: 12px; color: #444; margin-bottom: 25px;"></p>
+        
+        <div id="itemList"></div>
+
+        <div class="total-display">
+            <small style="color: #333; letter-spacing: 2px;">TOTAL PROFIT</small>
+            <h1 id="totalNet" style="margin: 5px 0 0 0; font-size: 32px;">Rp 0</h1>
+        </div>
+    </div>
+
+    <div class="action-container">
+        <button class="dl-btn" onclick="generateOutput()">Download & Generate Link</button>
+        
+        <div id="linkArea">
+            <span style="font-size: 11px; color: #666;">LINK DOWNLOAD TERSEDIA:</span>
+            <a id="downloadLink" class="link-text" href="#" target="_blank">Menyiapkan link...</a>
+            <small style="color: #444; font-size: 10px; margin-top: 8px; display: block;">Link ini hanya berlaku sementara di browser ini.</small>
+        </div>
+    </div>
+
+<script>
+    let totalValue = 0;
+    let selectedPhotoUrl = '';
+
+    document.getElementById('dateText').innerText = new Date().toLocaleDateString('id-ID', {
+        weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+    });
+
+    function previewFile() {
+        const fileInput = document.getElementById('itemPhoto');
+        const file = fileInput.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = e => {
+                selectedPhotoUrl = e.target.result;
+                document.getElementById('fileLabel').innerText = "✅ Foto Siap";
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function addItem() {
+        const name = document.getElementById('itemName').value;
+        const price = document.getElementById('itemPrice').value;
+        if(!name || !price) return;
+
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `
+            ${selectedPhotoUrl ? `<img src="${selectedPhotoUrl}">` : `<div style="width:55px;height:55px;background:#111;border-radius:10px;"></div>`}
+            <div style="flex:1">
+                <b style="display:block;">${name}</b>
+                <span style="color:var(--success); font-size:14px;">+ Rp ${parseInt(price).toLocaleString('id-ID')}</span>
+            </div>
+        `;
+
+        document.getElementById('itemList').prepend(div);
+        totalValue += parseInt(price);
+        document.getElementById('totalNet').innerText = "Rp " + totalValue.toLocaleString('id-ID');
+
+        // Reset
+        document.getElementById('itemName').value = '';
+        document.getElementById('itemPrice').value = '';
+        selectedPhotoUrl = '';
+        document.getElementById('fileLabel').innerText = "📷 Pilih Foto Menu";
+    }
+
+    function generateOutput() {
+        const receipt = document.getElementById('receipt');
+        const linkArea = document.getElementById('linkArea');
+        const dlLink = document.getElementById('downloadLink');
+
+        html2canvas(receipt, {
+            backgroundColor: "#000000",
+            scale: 2,
+            useCORS: true
+        }).then(canvas => {
+            // Convert canvas ke Blob (File Data)
+            canvas.toBlob((blob) => {
+                const url = URL.createObjectURL(blob);
+                
+                // 1. Download Otomatis
+                const hiddenLink = document.createElement('a');
+                hiddenLink.download = `Report-${Date.now()}.jpg`;
+                hiddenLink.href = url;
+                hiddenLink.click();
+
+                // 2. Tampilkan Link di bawah tombol
+                dlLink.href = url;
+                dlLink.innerText = url; // Ini adalah Blob URL browser
+                dlLink.download = `Report-${Date.now()}.jpg`;
+                linkArea.style.display = 'block';
+            }, 'image/jpeg', 0.9);
+        });
+    }
+</script>
+
+</body>
+</html>
